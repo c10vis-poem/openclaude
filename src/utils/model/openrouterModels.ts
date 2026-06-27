@@ -12,30 +12,40 @@ export function isOpenRouterProvider(): boolean {
 export function getOpenRouterModelOptions(): ModelOption[] {
   return [
     {
+      value: 'openai/gpt-oss-120b:free',
+      label: 'GPT-OSS 120B (free)',
+      description: 'OpenRouter · openai/gpt-oss-120b:free · DeepSeek R1 0528 120B · No cost',
+      descriptionForModel: 'DeepSeek R1 0528 120B distill via OpenRouter free tier',
+    },
+    {
+      value: 'nvidia/nemotron-3-ultra-550b-a55b:free',
+      label: 'Nemotron 3 Ultra 550B (free)',
+      description: 'OpenRouter · nvidia/nemotron-3-ultra-550b-a55b:free · Top benchmark scores · No cost',
+      descriptionForModel: 'NVIDIA Nemotron 3 Ultra 550B A55B via OpenRouter free tier',
+    },
+    {
+      value: 'nousresearch/hermes-3-llama-3.1-405b:free',
+      label: 'Hermes 3 405B (free)',
+      description: 'OpenRouter · nousresearch/hermes-3-llama-3.1-405b:free · Llama 3.1 405B base · No cost',
+      descriptionForModel: 'Nous Hermes 3 on Llama 3.1 405B via OpenRouter free tier',
+    },
+    {
+      value: 'google/gemma-4-31b-it:free',
+      label: 'Gemma 4 31B (free)',
+      description: 'OpenRouter · google/gemma-4-31b-it:free · No cost',
+      descriptionForModel: 'Google Gemma 4 31B Instruct via OpenRouter free tier',
+    },
+    {
       value: 'qwen/qwen3-coder:free',
-      label: 'Qwen3 Coder (free)',
-      description: 'OpenRouter · qwen/qwen3-coder:free · No cost',
-      descriptionForModel: 'Qwen3 Coder via OpenRouter free tier',
+      label: 'Qwen3 Coder 480B (free)',
+      description: 'OpenRouter · qwen/qwen3-coder:free · 480B A35B · No cost',
+      descriptionForModel: 'Qwen3 Coder 480B A35B via OpenRouter free tier',
     },
     {
-      value: 'deepseek/deepseek-r1:free',
-      label: 'DeepSeek R1 (free)',
-      description: 'OpenRouter · deepseek/deepseek-r1:free · No cost',
-    },
-    {
-      value: 'deepseek/deepseek-chat-v3-0324:free',
-      label: 'DeepSeek V3 (free)',
-      description: 'OpenRouter · deepseek/deepseek-chat-v3-0324:free · No cost',
-    },
-    {
-      value: 'meta-llama/llama-4-maverick:free',
-      label: 'Llama 4 Maverick (free)',
-      description: 'OpenRouter · meta-llama/llama-4-maverick:free · No cost',
-    },
-    {
-      value: 'google/gemma-3-27b-it:free',
-      label: 'Gemma 3 27B (free)',
-      description: 'OpenRouter · google/gemma-3-27b-it:free · No cost',
+      value: 'openai/gpt-oss-20b:free',
+      label: 'GPT-OSS 20B (free, fast)',
+      description: 'OpenRouter · openai/gpt-oss-20b:free · Faster/lighter · No cost',
+      descriptionForModel: 'GPT-OSS 20B via OpenRouter free tier — faster fallback',
     },
   ]
 }
