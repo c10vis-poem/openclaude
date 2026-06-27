@@ -12,16 +12,16 @@ export function isOpenRouterProvider(): boolean {
 export function getOpenRouterModelOptions(): ModelOption[] {
   return [
     {
-      value: 'openai/gpt-oss-120b:free',
-      label: 'GPT-OSS 120B (free)',
-      description: 'OpenRouter · openai/gpt-oss-120b:free · 120B open-source model · No cost',
-      descriptionForModel: 'GPT-OSS 120B via OpenRouter free tier',
-    },
-    {
       value: 'nvidia/nemotron-3-ultra-550b-a55b:free',
       label: 'Nemotron 3 Ultra 550B (free)',
       description: 'OpenRouter · nvidia/nemotron-3-ultra-550b-a55b:free · Top benchmark scores · No cost',
       descriptionForModel: 'NVIDIA Nemotron 3 Ultra 550B A55B via OpenRouter free tier',
+    },
+    {
+      value: 'openai/gpt-oss-120b:free',
+      label: 'GPT-OSS 120B (free)',
+      description: 'OpenRouter · openai/gpt-oss-120b:free · 120B open-source model · No cost',
+      descriptionForModel: 'GPT-OSS 120B via OpenRouter free tier',
     },
     {
       value: 'openrouter/owl-alpha',
