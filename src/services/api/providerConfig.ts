@@ -758,7 +758,13 @@ export function getAdditionalModelOptionsCacheScope(): string | null {
     return null
   }
 
-  if (!isLocalProviderUrl(request.baseUrl)) {
+  const isLocal = isLocalProviderUrl(request.baseUrl)
+  // Allow discovery for explicit non-default remote URLs (e.g. OpenRouter, LM Studio hosted).
+  // The official api.openai.com endpoint is excluded — Codex handles that path separately.
+  const hasExplicitRemoteUrl =
+    !!process.env.OPENAI_BASE_URL &&
+    !(request.baseUrl?.toLowerCase().includes('api.openai.com') ?? false)
+  if (!isLocal && !hasExplicitRemoteUrl) {
     return null
   }
 
