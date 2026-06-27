@@ -10,7 +10,7 @@ import { getAWSRegion, getDefaultVertexRegion, isEnvTruthy } from './envUtils.js
 import { getDisplayPath } from './file.js';
 import { formatNumber } from './format.js';
 import { getIdeClientName, type IDEExtensionInstallationStatus, isJetBrainsIde, toIDEDisplayName } from './ide.js';
-import { getClaudeAiUserDefaultModelDescription, modelDisplayString } from './model/model.js';
+import { getClaudeAiUserDefaultModelDescription, getUserSpecifiedModelSetting, modelDisplayString } from './model/model.js';
 import { getAPIProvider, type APIProvider } from './model/providers.js';
 import { resolveProviderRequest } from '../services/api/providerConfig.js';
 import { getMTLSConfig } from './mtls.js';
@@ -418,7 +418,14 @@ export function buildAPIProviderProperties(): Property[] {
       process.env.OPENAI_BASE_URL,
       secretSource,
     );
-    const openaiModel = process.env.OPENAI_MODEL;
+    // /model command updates mainLoopModelOverride in app state; the env var
+    // is only the initial seed. Read through getUserSpecifiedModelSetting so
+    // the Status pane reflects what the next API request will actually send.
+    const sessionModel = getUserSpecifiedModelSetting();
+    const openaiModel =
+      typeof sessionModel === 'string' && sessionModel.length > 0
+        ? sessionModel
+        : process.env.OPENAI_MODEL;
     if (openaiModel) {
       const modelDisplay = formatOpenAICompatibleModelDisplay(
         openaiModel,
@@ -434,12 +441,20 @@ export function buildAPIProviderProperties(): Property[] {
   } else if (apiProvider === 'gemini') {
     const geminiBaseUrl = process.env.GEMINI_BASE_URL;
     pushRedactedProperty(properties, 'Gemini base URL', geminiBaseUrl, secretSource);
-    const geminiModel = process.env.GEMINI_MODEL;
+    const sessionModel = getUserSpecifiedModelSetting();
+    const geminiModel =
+      typeof sessionModel === 'string' && sessionModel.length > 0
+        ? sessionModel
+        : process.env.GEMINI_MODEL;
     pushRedactedProperty(properties, 'Model', geminiModel, secretSource);
   } else if (apiProvider === 'mistral') {
     const mistralBaseUrl = process.env.MISTRAL_BASE_URL;
     pushRedactedProperty(properties, 'Mistral base URL', mistralBaseUrl, secretSource);
-    const mistralModel = process.env.MISTRAL_MODEL;
+    const sessionModel = getUserSpecifiedModelSetting();
+    const mistralModel =
+      typeof sessionModel === 'string' && sessionModel.length > 0
+        ? sessionModel
+        : process.env.MISTRAL_MODEL;
     pushRedactedProperty(properties, 'Model', mistralModel, secretSource);
   }
   const proxyUrl = getProxyUrl();
