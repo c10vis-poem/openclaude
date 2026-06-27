@@ -26,20 +26,8 @@ export function getOpenRouterModelOptions(): ModelOption[] {
     {
       value: 'openrouter/owl-alpha',
       label: 'Owl Alpha',
-      description: 'OpenRouter · openrouter/owl-alpha · Most-used free model on OpenRouter · Routes to best available',
-      descriptionForModel: 'Owl Alpha via OpenRouter — routes to the best available model for your prompt',
-    },
-    {
-      value: 'nousresearch/hermes-3-llama-3.1-405b:free',
-      label: 'Hermes 3 405B (free)',
-      description: 'OpenRouter · nousresearch/hermes-3-llama-3.1-405b:free · Llama 3.1 405B base · No cost',
-      descriptionForModel: 'Nous Hermes 3 on Llama 3.1 405B via OpenRouter free tier',
-    },
-    {
-      value: 'google/gemma-4-31b-it:free',
-      label: 'Gemma 4 31B (free)',
-      description: 'OpenRouter · google/gemma-4-31b-it:free · No cost',
-      descriptionForModel: 'Google Gemma 4 31B Instruct via OpenRouter free tier',
+      description: 'OpenRouter · openrouter/owl-alpha · Most-used free model on OpenRouter',
+      descriptionForModel: 'Owl Alpha via OpenRouter',
     },
     {
       value: 'qwen/qwen3-coder:free',
@@ -48,10 +36,10 @@ export function getOpenRouterModelOptions(): ModelOption[] {
       descriptionForModel: 'Qwen3 Coder 480B A35B via OpenRouter free tier',
     },
     {
-      value: 'openai/gpt-oss-20b:free',
-      label: 'GPT-OSS 20B (free, fast)',
-      description: 'OpenRouter · openai/gpt-oss-20b:free · Faster/lighter · No cost',
-      descriptionForModel: 'GPT-OSS 20B via OpenRouter free tier — faster fallback',
+      value: 'google/gemma-4-31b-it:free',
+      label: 'Gemma 4 31B (free)',
+      description: 'OpenRouter · google/gemma-4-31b-it:free · No cost',
+      descriptionForModel: 'Google Gemma 4 31B Instruct via OpenRouter free tier',
     },
   ]
 }
