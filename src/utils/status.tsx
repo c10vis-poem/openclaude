@@ -71,30 +71,6 @@ const OPENAI_COMPATIBLE_STATUS_METADATA: Partial<
   },
 };
 
-function formatOpenAICompatibleModelDisplay(
-  model: string,
-  resolveModelMetadata = false,
-): string {
-  if (!resolveModelMetadata) {
-    return model;
-  }
-
-  let modelDisplay = model;
-  const resolved = resolveProviderRequest({ model });
-  const resolvedModel = resolved.resolvedModel;
-  const reasoningEffort = resolved.reasoning?.effort;
-
-  if (resolvedModel && resolvedModel !== model.toLowerCase()) {
-    modelDisplay = resolvedModel;
-  }
-
-  if (reasoningEffort) {
-    modelDisplay = `${modelDisplay} (${reasoningEffort})`;
-  }
-
-  return modelDisplay;
-}
-
 function pushRedactedProperty(
   properties: Property[],
   label: string,
@@ -176,9 +152,6 @@ export function buildMcpProperties(clients: MCPServerConnection[] = [], theme: T
   if (!servers.length) {
     return [];
   }
-
-  // Summary instead of a full server list — 20+ servers wrapped onto many
-  // rows, dominating the Status pane. Show counts by state + /mcp hint.
   const byState = {
     connected: 0,
     pending: 0,
@@ -210,20 +183,15 @@ export async function buildMemoryDiagnostics(): Promise<Diagnostic[]> {
 }
 export function buildSettingSourcesProperties(): Property[] {
   const enabledSources = getEnabledSettingSources();
-
-  // Filter to only sources that actually have settings loaded
   const sourcesWithSettings = enabledSources.filter(source => {
     const settings = getSettingsForSource(source);
     return settings !== null && Object.keys(settings).length > 0;
   });
-
-  // Map internal names to user-friendly names
-  // For policySettings, distinguish between remote and local (or skip if neither exists)
   const sourceNames = sourcesWithSettings.map(source => {
     if (source === 'policySettings') {
       const origin = getPolicySettingsOrigin();
       if (origin === null) {
-        return null; // Skip - no policy settings exist
+        return null;
       }
       switch (origin) {
         case 'remote':
@@ -272,8 +240,6 @@ export async function buildInstallationHealthDiagnostics(): Promise<Diagnostic[]
     const fileList = invalidFiles.join(', ');
     items.push(`Found invalid settings files: ${fileList}. They will be ignored.`);
   }
-
-  // Add warnings from doctor diagnostic (includes leftover installations, config mismatches, etc.)
   diagnostic.warnings.forEach(warning => {
     items.push(warning.issue);
   });
@@ -306,8 +272,6 @@ export function buildAccountProperties(): Property[] {
       value: accountInfo.apiKeySource
     });
   }
-
-  // Hide sensitive account info in demo mode
   if (accountInfo.organization && !process.env.IS_DEMO) {
     properties.push({
       label: 'Organization',
@@ -418,29 +382,12 @@ export function buildAPIProviderProperties(): Property[] {
       process.env.OPENAI_BASE_URL,
       secretSource,
     );
-    const openaiModel = process.env.OPENAI_MODEL;
-    if (openaiModel) {
-      const modelDisplay = formatOpenAICompatibleModelDisplay(
-        openaiModel,
-        metadata.resolveModelMetadata,
-      );
-      pushRedactedProperty(
-        properties,
-        'Model',
-        modelDisplay,
-        secretSource,
-      );
-    }
   } else if (apiProvider === 'gemini') {
     const geminiBaseUrl = process.env.GEMINI_BASE_URL;
     pushRedactedProperty(properties, 'Gemini base URL', geminiBaseUrl, secretSource);
-    const geminiModel = process.env.GEMINI_MODEL;
-    pushRedactedProperty(properties, 'Model', geminiModel, secretSource);
   } else if (apiProvider === 'mistral') {
     const mistralBaseUrl = process.env.MISTRAL_BASE_URL;
     pushRedactedProperty(properties, 'Mistral base URL', mistralBaseUrl, secretSource);
-    const mistralModel = process.env.MISTRAL_MODEL;
-    pushRedactedProperty(properties, 'Model', mistralModel, secretSource);
   }
   const proxyUrl = getProxyUrl();
   if (proxyUrl) {

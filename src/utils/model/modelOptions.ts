@@ -41,6 +41,8 @@ import {
 import { getCachedOllamaModelOptions, isOllamaProvider } from './ollamaModels.js'
 import { getCachedNvidiaNimModelOptions, isNvidiaNimProvider } from './nvidiaNimModels.js'
 import { getCachedMiniMaxModelOptions, isMiniMaxProvider } from './minimaxModels.js'
+import { isSambaNovaProvider, getSambaNovaModelOptions } from './sambanovaModels.js'
+import { isOpenRouterProvider, getOpenRouterModelOptions } from './openrouterModels.js'
 import { getAntModels } from './antModels.js'
 
 // @[MODEL LAUNCH]: Update all the available and default model option strings below.
@@ -114,7 +116,6 @@ export function getDefaultOptionForUser(fastMode = false): ModelOption {
 function getCustomSonnetOption(): ModelOption | undefined {
   const is3P = getAPIProvider() !== 'firstParty'
   const customSonnetModel = process.env.ANTHROPIC_DEFAULT_SONNET_MODEL
-  // When a 3P user has a custom sonnet model string, show it directly
   if (is3P && customSonnetModel) {
     const is1m = has1mContext(customSonnetModel)
     return {
@@ -129,8 +130,6 @@ function getCustomSonnetOption(): ModelOption | undefined {
   }
 }
 
-// @[MODEL LAUNCH]: Update or add model option functions (getSonnetXXOption, getOpusXXOption, etc.)
-// with the new model's label and description. These appear in the /model picker.
 function getSonnet46Option(): ModelOption {
   const is3P = getAPIProvider() !== 'firstParty'
   return {
@@ -145,7 +144,6 @@ function getSonnet46Option(): ModelOption {
 function getCustomOpusOption(): ModelOption | undefined {
   const is3P = getAPIProvider() !== 'firstParty'
   const customOpusModel = process.env.ANTHROPIC_DEFAULT_OPUS_MODEL
-  // When a 3P user has a custom opus model string, show it directly
   if (is3P && customOpusModel) {
     const is1m = has1mContext(customOpusModel)
     return {
@@ -213,7 +211,6 @@ export function getOpus46_1MOption(fastMode = false): ModelOption {
 function getCustomHaikuOption(): ModelOption | undefined {
   const is3P = getAPIProvider() !== 'firstParty'
   const customHaikuModel = process.env.ANTHROPIC_DEFAULT_HAIKU_MODEL
-  // When a 3P user has a custom haiku model string, show it directly
   if (is3P && customHaikuModel) {
     return {
       value: 'haiku',
@@ -249,7 +246,6 @@ function getHaiku35Option(): ModelOption {
 }
 
 function getHaikuOption(): ModelOption {
-  // Return correct Haiku option based on provider
   const haikuModel = getDefaultHaikuModel()
   return haikuModel === getModelStrings().haiku45
     ? getHaiku45Option()
@@ -332,61 +328,18 @@ function getCodexSparkOption(): ModelOption {
 
 function getCodexModelOptions(): ModelOption[] {
   return [
-    {
-      value: 'gpt-5.5',
-      label: 'gpt-5.5',
-      description: 'GPT-5.5 with high reasoning',
-    },
-    {
-      value: 'gpt-5.4',
-      label: 'gpt-5.4',
-      description: 'GPT-5.4 with high reasoning',
-    },
-    {
-      value: 'gpt-5.3-codex',
-      label: 'gpt-5.3-codex',
-      description: 'GPT-5.3 Codex with high reasoning',
-    },
-    {
-      value: 'gpt-5.3-codex-spark',
-      label: 'gpt-5.3-codex-spark',
-      description: 'GPT-5.3 Codex Spark for fast tool loops',
-    },
-    {
-      value: 'codexspark',
-      label: 'codexspark',
-      description: 'GPT-5.3 Codex Spark alias for fast tool loops',
-    },
-    {
-      value: 'gpt-5.2-codex',
-      label: 'gpt-5.2-codex',
-      description: 'GPT-5.2 Codex with high reasoning',
-    },
-    {
-      value: 'gpt-5.1-codex-max',
-      label: 'gpt-5.1-codex-max',
-      description: 'GPT-5.1 Codex Max for deep reasoning',
-    },
-    {
-      value: 'gpt-5.1-codex-mini',
-      label: 'gpt-5.1-codex-mini',
-      description: 'GPT-5.1 Codex Mini - faster, cheaper',
-    },
-    {
-      value: 'gpt-5.5-mini',
-      label: 'gpt-5.5-mini',
-      description: 'GPT-5.5 Mini - faster, cheaper',
-    },
-    {
-      value: 'gpt-5.4-mini',
-      label: 'gpt-5.4-mini',
-      description: 'GPT-5.4 Mini - faster, cheaper',
-    },
+    { value: 'gpt-5.5', label: 'gpt-5.5', description: 'GPT-5.5 with high reasoning' },
+    { value: 'gpt-5.4', label: 'gpt-5.4', description: 'GPT-5.4 with high reasoning' },
+    { value: 'gpt-5.3-codex', label: 'gpt-5.3-codex', description: 'GPT-5.3 Codex with high reasoning' },
+    { value: 'gpt-5.3-codex-spark', label: 'gpt-5.3-codex-spark', description: 'GPT-5.3 Codex Spark for fast tool loops' },
+    { value: 'codexspark', label: 'codexspark', description: 'GPT-5.3 Codex Spark alias for fast tool loops' },
+    { value: 'gpt-5.2-codex', label: 'gpt-5.2-codex', description: 'GPT-5.2 Codex with high reasoning' },
+    { value: 'gpt-5.1-codex-max', label: 'gpt-5.1-codex-max', description: 'GPT-5.1 Codex Max for deep reasoning' },
+    { value: 'gpt-5.1-codex-mini', label: 'gpt-5.1-codex-mini', description: 'GPT-5.1 Codex Mini - faster, cheaper' },
+    { value: 'gpt-5.5-mini', label: 'gpt-5.5-mini', description: 'GPT-5.5 Mini - faster, cheaper' },
+    { value: 'gpt-5.4-mini', label: 'gpt-5.4-mini', description: 'GPT-5.4 Mini - faster, cheaper' },
   ]
 }
-
-// @[MODEL LAUNCH]: Update the model picker lists below to include/reorder options for the new model.
-// Each user tier (ant, Max/Team Premium, Pro/Team Standard/Enterprise, PAYG 1P, PAYG 3P) has its own list.
 
 import { getAllCopilotModels } from './copilotModels.js'
 
@@ -403,29 +356,22 @@ function getModelOptionsBase(fastMode = false): ModelOption[] {
     return [getDefaultOptionForUser(fastMode), ...getCopilotModelOptions()]
   }
 
-  // When using Ollama, show models from the Ollama server instead of Claude models
   if (getAPIProvider() === 'openai' && isOllamaProvider()) {
     const defaultOption = getDefaultOptionForUser(fastMode)
     const ollamaModels = getCachedOllamaModelOptions()
     if (ollamaModels.length > 0) {
       return [defaultOption, ...ollamaModels]
     }
-    // Fallback: if models not yet fetched, show current model instead of Claude models
     const currentModel = getUserSpecifiedModelSetting() ?? getInitialMainLoopModel()
     if (currentModel != null) {
       return [
         defaultOption,
-        {
-          value: currentModel,
-          label: currentModel,
-          description: 'Currently configured Ollama model',
-        },
+        { value: currentModel, label: currentModel, description: 'Currently configured Ollama model' },
       ]
     }
     return [defaultOption]
   }
 
-  // When using NVIDIA NIM, show models from the NVIDIA catalog
   if (isNvidiaNimProvider()) {
     const defaultOption = getDefaultOptionForUser(fastMode)
     const nvidiaModels = getCachedNvidiaNimModelOptions()
@@ -435,7 +381,6 @@ function getModelOptionsBase(fastMode = false): ModelOption[] {
     return [defaultOption]
   }
 
-  // When using MiniMax, show models from the MiniMax catalog
   if (isMiniMaxProvider()) {
     const defaultOption = getDefaultOptionForUser(fastMode)
     const minimaxModels = getCachedMiniMaxModelOptions()
@@ -445,8 +390,17 @@ function getModelOptionsBase(fastMode = false): ModelOption[] {
     return [defaultOption]
   }
 
+  // SambaNova: show curated model list, skip discovery (their API returns openai/-prefixed IDs)
+  if (getAPIProvider() === 'openai' && isSambaNovaProvider()) {
+    return [getDefaultOptionForUser(fastMode), ...getSambaNovaModelOptions()]
+  }
+
+  // OpenRouter: show curated free model list, skip discovery
+  if (getAPIProvider() === 'openai' && isOpenRouterProvider()) {
+    return [getDefaultOptionForUser(fastMode), ...getOpenRouterModelOptions()]
+  }
+
   if (process.env.USER_TYPE === 'ant') {
-    // Build options from antModels config
     const antModelOptions: ModelOption[] = getAntModels().map(m => ({
       value: m.alias,
       label: m.label,
@@ -465,27 +419,22 @@ function getModelOptionsBase(fastMode = false): ModelOption[] {
 
   if (isClaudeAISubscriber()) {
     if (isMaxSubscriber() || isTeamPremiumSubscriber()) {
-      // Max and Team Premium users: Opus is default, show Sonnet as alternative
       const premiumOptions = [getDefaultOptionForUser(fastMode)]
       if (!isOpus1mMergeEnabled() && checkOpus1mAccess()) {
         premiumOptions.push(getMaxOpus46_1MOption(fastMode))
       }
-
       premiumOptions.push(MaxSonnet46Option)
       if (checkSonnet1mAccess()) {
         premiumOptions.push(getMaxSonnet46_1MOption())
       }
-
       premiumOptions.push(MaxHaiku45Option)
       return premiumOptions
     }
 
-    // Pro/Team Standard/Enterprise users: Sonnet is default, show Opus as alternative
     const standardOptions = [getDefaultOptionForUser(fastMode)]
     if (checkSonnet1mAccess()) {
       standardOptions.push(getMaxSonnet46_1MOption())
     }
-
     if (isOpus1mMergeEnabled()) {
       standardOptions.push(getMergedOpus1MOption(fastMode))
     } else {
@@ -494,7 +443,6 @@ function getModelOptionsBase(fastMode = false): ModelOption[] {
         standardOptions.push(getMaxOpus46_1MOption(fastMode))
       }
     }
-
     standardOptions.push(MaxHaiku45Option)
     return standardOptions
   }
@@ -509,10 +457,6 @@ function getModelOptionsBase(fastMode = false): ModelOption[] {
     ]
   }
 
-  // When a provider profile's env is applied, collect its models so they
-  // can be appended to the standard picker options below.
-  // We check PROFILE_ENV_APPLIED to avoid the ?? profiles[0] fallback in
-  // getActiveProviderProfile which would affect users with inactive profiles.
   const profileEnvApplied = process.env.CLAUDE_CODE_PROVIDER_PROFILE_ENV_APPLIED === '1'
   const profileModelOptions: ModelOption[] = []
   if (profileEnvApplied) {
@@ -523,7 +467,6 @@ function getModelOptionsBase(fastMode = false): ModelOption[] {
     }
   }
 
-  // PAYG 1P API: Default (Sonnet) + Sonnet 1M + Opus 4.7 + Opus 4.6 + Opus 1M + Haiku
   if (getAPIProvider() === 'firstParty') {
     const payg1POptions = [getDefaultOptionForUser(fastMode)]
     if (checkSonnet1mAccess()) {
@@ -543,10 +486,8 @@ function getModelOptionsBase(fastMode = false): ModelOption[] {
     return payg1POptions
   }
 
-  // PAYG 3P: Default (Sonnet 4.5) + Sonnet (3P custom) or Sonnet 4.6/1M + Opus (3P custom) or Opus 4.1/Opus 4.6/Opus1M + Haiku + Opus 4.1
   const payg3pOptions = [getDefaultOptionForUser(fastMode)]
 
-  // Add Codex models for openai and codex providers
   if (getAPIProvider() === 'openai' || getAPIProvider() === 'codex') {
     payg3pOptions.push(...getCodexModelOptions())
   }
@@ -555,7 +496,6 @@ function getModelOptionsBase(fastMode = false): ModelOption[] {
   if (customSonnet !== undefined) {
     payg3pOptions.push(customSonnet)
   } else {
-    // Add Sonnet 4.6 since Sonnet 4.5 is the default
     payg3pOptions.push(getSonnet46Option())
     if (checkSonnet1mAccess()) {
       payg3pOptions.push(getSonnet46_1MOption())
@@ -566,8 +506,7 @@ function getModelOptionsBase(fastMode = false): ModelOption[] {
   if (customOpus !== undefined) {
     payg3pOptions.push(customOpus)
   } else {
-    // Add Opus 4.1, Opus 4.7, Opus 4.6 and Opus 4.6 1M
-    payg3pOptions.push(getOpus41Option()) // This is the default opus
+    payg3pOptions.push(getOpus41Option())
     payg3pOptions.push(getOpus47Option(fastMode))
     payg3pOptions.push(getOpus46Option(fastMode))
     if (checkOpus1mAccess()) {
@@ -584,19 +523,11 @@ function getModelOptionsBase(fastMode = false): ModelOption[] {
   return payg3pOptions
 }
 
-// @[MODEL LAUNCH]: Add the new model ID to the appropriate family pattern below
-// so the "newer version available" hint works correctly.
-/**
- * Map a full model name to its family alias and the marketing name of the
- * version the alias currently resolves to. Used to detect when a user has
- * a specific older version pinned and a newer one is available.
- */
 function getModelFamilyInfo(
   model: string,
 ): { alias: string; currentVersionName: string } | null {
   const canonical = getCanonicalName(model)
 
-  // Sonnet family
   if (
     canonical.includes('claude-sonnet-4-6') ||
     canonical.includes('claude-sonnet-4-5') ||
@@ -610,7 +541,6 @@ function getModelFamilyInfo(
     }
   }
 
-  // Opus family
   if (canonical.includes('claude-opus-4')) {
     const currentName = getMarketingNameForModel(getDefaultOpusModel())
     if (currentName) {
@@ -618,7 +548,6 @@ function getModelFamilyInfo(
     }
   }
 
-  // Haiku family
   if (
     canonical.includes('claude-haiku') ||
     canonical.includes('claude-3-5-haiku')
@@ -632,25 +561,15 @@ function getModelFamilyInfo(
   return null
 }
 
-/**
- * Returns a ModelOption for a known Anthropic model with a human-readable
- * label, and an upgrade hint if a newer version is available via the alias.
- * Returns null if the model is not recognized.
- */
 function getKnownModelOption(model: string): ModelOption | null {
   const marketingName = getMarketingNameForModel(model)
   if (!marketingName) return null
 
   const familyInfo = getModelFamilyInfo(model)
   if (!familyInfo) {
-    return {
-      value: model,
-      label: marketingName,
-      description: model,
-    }
+    return { value: model, label: marketingName, description: model }
   }
 
-  // Check if the alias currently resolves to a different (newer) version
   if (marketingName !== familyInfo.currentVersionName) {
     return {
       value: model,
@@ -659,12 +578,7 @@ function getKnownModelOption(model: string): ModelOption | null {
     }
   }
 
-  // Same version as the alias — just show the friendly name
-  return {
-    value: model,
-    label: marketingName,
-    description: model,
-  }
+  return { value: model, label: marketingName, description: model }
 }
 
 export function getModelOptions(fastMode = false): ModelOption[] {
@@ -674,7 +588,6 @@ export function getModelOptions(fastMode = false): ModelOption[] {
 
   const options = getModelOptionsBase(fastMode)
 
-  // Add the custom model from the ANTHROPIC_CUSTOM_MODEL_OPTION env var
   const envCustomModel = process.env.ANTHROPIC_CUSTOM_MODEL_OPTION
   if (
     envCustomModel &&
@@ -689,15 +602,12 @@ export function getModelOptions(fastMode = false): ModelOption[] {
     })
   }
 
-  // Append additional model options fetched during bootstrap
   for (const opt of getScopedAdditionalModelOptions()) {
     if (!options.some(existing => existing.value === opt.value)) {
       options.push(opt)
     }
   }
 
-  // Add custom model from either the current model value or the initial one
-  // if it is not already in the options.
   let customModel: ModelSetting = null
   const currentMainLoopModel = getUserSpecifiedModelSetting()
   const initialMainLoopModel = getInitialMainLoopModel()
@@ -715,48 +625,29 @@ export function getModelOptions(fastMode = false): ModelOption[] {
   } else if (customModel === 'gpt-5.3-codex-spark') {
     return filterModelOptionsByAllowlist([...options, getCodexSparkOption()])
   } else if (customModel === 'opus' && getAPIProvider() === 'firstParty') {
-    return filterModelOptionsByAllowlist([
-      ...options,
-      getMaxOpusOption(fastMode),
-    ])
+    return filterModelOptionsByAllowlist([...options, getMaxOpusOption(fastMode)])
   } else if (customModel === 'opus[1m]' && getAPIProvider() === 'firstParty') {
-    return filterModelOptionsByAllowlist([
-      ...options,
-      getMergedOpus1MOption(fastMode),
-    ])
+    return filterModelOptionsByAllowlist([...options, getMergedOpus1MOption(fastMode)])
   } else {
-    // Try to show a human-readable label for known Anthropic models, with an
-    // upgrade hint if the alias now resolves to a newer version.
     const knownOption = getKnownModelOption(customModel)
     if (knownOption) {
       options.push(knownOption)
     } else {
-      options.push({
-        value: customModel,
-        label: customModel,
-        description: 'Custom model',
-      })
+      options.push({ value: customModel, label: customModel, description: 'Custom model' })
     }
     return filterModelOptionsByAllowlist(options)
   }
 }
 
-/**
- * Filter model options by the availableModels allowlist.
- * Always preserves the "Default" option (value: null).
- */
 function filterModelOptionsByAllowlist(options: ModelOption[]): ModelOption[] {
   const settings = getSettings_DEPRECATED() || {}
   const filtered = !settings.availableModels
-    ? options // No restrictions
+    ? options
     : options.filter(
     opt =>
       opt.value === null || (opt.value !== null && isModelAllowed(opt.value)),
   )
 
-  // Select state uses option values as identity keys. If two entries share the
-  // same value (e.g. provider-specific aliases collapsing to one model ID),
-  // navigation/focus can become inconsistent and appear as duplicate rendering.
   const seen = new Set<string>()
   return filtered.filter(opt => {
     const key = String(opt.value)
